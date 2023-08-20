@@ -1,6 +1,8 @@
 import smtplib
 import os
 from email.mime.text import MIMEText
+from email.mime.base import MIMEBase
+from email import encoders
 from email.mime.multipart import MIMEMultipart
 from google.oauth2.credentials import Credentials
 from google.auth.transport.requests import Request
@@ -28,6 +30,14 @@ msg['Subject'] = 'test email'
 
 body = 'testing email from pything smtplib script'
 msg.attach(MIMEText(body, 'plain'))
+
+picture_filename = 'coding.jpg'
+attachment = open(picture_filename, 'rb')
+picture = MIMEBase('application', 'octet-stream')
+picture.set_payload(attachment.read())
+encoders.encode_base64(picture)
+picture.add_header('Content-Disposition', f'attachment; filename={picture_filename}')
+msg.attach(picture)
 
 server = smtplib.SMTP(settings.smtp_server, settings.smtp_port)
 server.starttls()
